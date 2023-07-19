@@ -22,6 +22,6 @@ class Chat(object):
             logger.error(f'Error: {e}')
             data = {
                 'message': "I don't know",
-                'session_id': None,
+                'session_id': chat_session.session_id,
             }
             return make_response(resp, data)

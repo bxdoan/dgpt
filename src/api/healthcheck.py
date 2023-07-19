@@ -5,10 +5,9 @@ from src.utils import make_response
 
 
 class HealthCheckResource(object):
-    # auth = {"auth_disabled": True}
 
-    def on_get(self, req, resp):
-        make_response(resp, {})
+    def on_get(self, resp):
+        make_response(resp, {'status': 'ok', "message": "Hello, world!"})
 
 
 class VersionResource(object):
