@@ -72,8 +72,8 @@ class ChatSession:
             self.conversation.add_message("assistant", chatgpt_message)
             return chatgpt_message
         except Exception as e:
-            print(e)
-            return "something went wrong"
+            logger.error(f"Error: {e}")
+            return "Sorry, I don't know."
 
     def _chat_completion_request(self, messages: List[Dict]):
         headers = {
