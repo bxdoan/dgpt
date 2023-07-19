@@ -3,33 +3,16 @@ from typing import List, Dict
 import uuid
 import requests
 
-from src.config import HOME_REPO, API_KEY, MAX_TOKENS
+from src.config import API_KEY, PREPROCESSING_FILE
 from src.constants import MODEL, URL, SYSTEM_PROMPT
+from src import utils
+
+logger = utils.get_logger(__name__)
 
 
 def read_knowledge_base():
-    with open(f'{HOME_REPO}/tmp/knowledge_base.txt') as f:
+    with open(f'{PREPROCESSING_FILE}') as f:
         return f.read()
-
-
-def chat_with_chatgpt(prompt=''):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {API_KEY}"
-    }
-    json_payload = {
-        "model": MODEL,
-        "messages": [
-            {"role": "user", "content": read_knowledge_base()},
-            {"role": "user", "content": prompt},
-        ],
-        "max_tokens": MAX_TOKENS,
-        "temperature": 0.7,
-    }
-    res = requests.post(URL, headers=headers, json=json_payload).json()
-    if "error" in res:
-        return res["error"]['message']
-    return res['choices'][0]['message']['content']
 
 
 class Conversation:
@@ -92,20 +75,44 @@ class ChatSession:
             "Content-Type": "application/json",
             "Authorization": "Bearer " + API_KEY,
         }
-        json_data = {"model": MODEL,
-                     "messages": messages,
-                     "temperature": 0.7}
+        logger.info(f"History {self.session_id} len {len(messages)}")
+        json_data = {
+            "model": MODEL,
+            "messages": messages,
+            "temperature": 0.7
+        }
         try:
             response = requests.post(
-                "https://api.openai.com/v1/chat/completions",
+                URL,
                 headers=headers,
                 json=json_data,
             )
-            return response.json()["choices"][0]["message"]
+            res = response.json()
+            logger.info(f"ChatCompletion response: {res}")
+            return res['choices'][0]['message']
         except Exception as e:
-            print("Unable to generate ChatCompletion response")
-            print(f"Exception: {e}")
+            logger.error(f"Unable to generate ChatCompletion response\nException: {e}")
             return e
+
+
+chat_sessions: Dict[str, ChatSession] = {}
+
+
+def _get_user_session(chat_session_id = None) -> ChatSession:
+    """
+    If a ChatSession exists for the current user return it
+    Otherwise create a new session, add it into the session.
+    """
+
+    if chat_session_id:
+        chat_session = chat_sessions.get(chat_session_id)
+        if not chat_session:
+            chat_session = ChatSession()
+            chat_sessions[chat_session.session_id] = chat_session
+    else:
+        chat_session = ChatSession()
+        chat_sessions[chat_session.session_id] = chat_session
+    return chat_session
 
 
 if __name__ == '__main__':
