@@ -1,3 +1,4 @@
+import os.path
 import time
 from typing import List, Dict
 import uuid
@@ -11,6 +12,10 @@ logger = utils.get_logger(__name__)
 
 
 def read_knowledge_base():
+    # if file exists, read from it
+    if not PREPROCESSING_FILE or not os.path.exists(f'{PREPROCESSING_FILE}'):
+        return ''
+    logger.info(f'Loading knowledge base from {PREPROCESSING_FILE}')
     with open(f'{PREPROCESSING_FILE}') as f:
         return f.read()
 
