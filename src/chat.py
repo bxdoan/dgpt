@@ -1,23 +1,10 @@
 import time
 from typing import List, Dict
 import uuid
-import os
 import requests
-from dotenv import load_dotenv
 
-load_dotenv()
-HOME_REPO = os.path.abspath(os.path.dirname(__file__) + '/..')
-API_KEY = os.environ.get('API_KEY')
-MAX_TOKENS = os.environ.get('MAX_TOKENS')
-NUM_WORDS = os.environ.get('NUM_WORDS')
-MODEL = 'gpt-3.5-turbo-16k'
-URL = f"https://api.openai.com/v1/chat/completions"
-SYSTEM_PROMPT = """
-    You are a helpful AI assistant. You answer the user's queries.
-    NEVER make up an answer.
-    If you don't know the answer,
-    just respond with "I don't know".
-"""
+from src.config import HOME_REPO, API_KEY, MAX_TOKENS
+from src.constants import MODEL, URL, SYSTEM_PROMPT
 
 
 def read_knowledge_base():
@@ -122,10 +109,6 @@ class ChatSession:
 
 
 if __name__ == '__main__':
-
-    prompt = f"""
-    why was the NATO created?
-    """
     cs = ChatSession()
     # Interactive questions and answers
     while True:
