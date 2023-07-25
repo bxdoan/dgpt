@@ -14,14 +14,14 @@ class Chat(object):
         try:
             chatgpt_message = chat_session.get_chatgpt_response(message)
             data = {
-                'message': chatgpt_message,
+                'answer': chatgpt_message,
                 'session_id': chat_session.session_id,
             }
             return make_response(resp, data)
         except Exception as e:
             logger.error(f'Error: {e}')
             data = {
-                'message': "I don't know",
+                'answer': "I don't know",
                 'session_id': chat_session.session_id,
             }
             return make_response(resp, data)

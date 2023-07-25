@@ -1,6 +1,6 @@
 #!/bin/sh
 
-doc_str="Usage: ./run.sh [file_name] [arguments]
+doc_str="Usage: ./run.sh
     example: ./run.sh
 "
 # pull latest code
